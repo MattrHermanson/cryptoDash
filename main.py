@@ -9,6 +9,8 @@ import indicators
 import time
 from dotenv import load_dotenv
 import os
+import pprint
+import bot
 
 load_dotenv()
 
@@ -17,7 +19,6 @@ load_dotenv()
 #   measure profits of trades on the accounts
 #   if good, make trading bot
 
-#TODO Make environment variables before Pushing Code!!!!
 API_KEY = os.environ.get('API_KEY') 
 BASE64_PRIVATE_KEY = os.environ.get('BASE64_PRIVATE_KEY')
 
@@ -135,8 +136,15 @@ class CryptoAPITrading:
 
 def main():
     api_trading_client = CryptoAPITrading()
+   
+    # pprint.pprint(api_trading_client.get_orders()['results'][0])
+    # print("")
+    # pprint.pprint(api_trading_client.get_orders()['results'][1])
+    # print("")
+    # pprint.pprint(api_trading_client.get_orders()['results'][2])
     
-    print(api_trading_client.get_orders()['results'][1])
+    profitBot = bot.Bot('LTC-USD', api_trading_client, '')
+    profitBot.run(0)
 
 
 
