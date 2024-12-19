@@ -137,14 +137,11 @@ class CryptoAPITrading:
 def main():
     api_trading_client = CryptoAPITrading()
    
-    # pprint.pprint(api_trading_client.get_orders()['results'][0])
-    # print("")
-    # pprint.pprint(api_trading_client.get_orders()['results'][1])
-    # print("")
-    # pprint.pprint(api_trading_client.get_orders()['results'][2])
+    # print(api_trading_client.get_estimated_price('LTC-USD', 'both', '1')['results'][0])
     
-    profitBot = bot.Bot('LTC-USD', api_trading_client, '')
-    profitBot.run(0)
+    
+    profitBot = bot.Bot('LTC-USD', api_trading_client, '', 60)
+    profitBot.run(1)
 
 
 

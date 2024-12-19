@@ -1,17 +1,19 @@
 from main import CryptoAPITrading
 import time
 from trade import Trade
+from indicators import rsi, sma, ema, macd
 
 class Bot:
 
     #TODO add min time interval between api requests
-    def __init__(self, coin: str, client: CryptoAPITrading, pathToLog: str):
+    def __init__(self, coin: str, client: CryptoAPITrading, pathToLog: str, requestInterval: int):
         print("bot created")
         self.coin = coin
         self.client = client
         self.pathToLog = pathToLog
-        self.tradeList = []
+        self.requestInterval = requestInterval
 
+        self.tradeList = []
         self.positionQ = 0
         self.positionP = 0
         self.profit = 0
@@ -28,7 +30,7 @@ class Bot:
             currentOrderNum = self.client.get_orders()
             currentOrderNum = len(currentOrderNum['results'])
 
-            #every 5min look for new orders, keep track of order updates,
+            #every 1min look for new orders, keep track of order updates,
             #and look for buy sell pairs
             #note most recent order is at [0] and order [i] becomes [i+1] when there is a new order
             while (True):
@@ -43,10 +45,47 @@ class Bot:
                     
                 self.updateOrders(self.tradeList, getOrderRequest)
                 self.printInfo()
-                #wait 1 minute
-                time.sleep(60)
+
+                #wait
+                time.sleep(self.requestInterval)
+
         elif (mode == 1):
-            pass 
+            #buy conditions
+            #rsi < 30
+            #macd > 0
+            #...
+            
+            period = 14
+            lastPrices = []
+
+            #initialize lastPrices list
+            for _ in range(period+1):
+                getPriceRequest = self.client.get_estimated_price(self.coin, 'both', '1')
+                getPriceRequest = float(getPriceRequest['results'][0]['price'])
+                lastPrices.append(getPriceRequest)
+                #wait
+                time.sleep(self.requestInterval)
+
+            #TODO change sma to use lastPrices[0] -> lastPrices[-1]
+            coin_sma = sma(lastPrices)
+            coin_rsi = rsi(lastPrices)
+            coin_ema = ema(lastPrices[-1], coin_sma, period)
+
+            while (True):
+                #remove oldest price and fill new one
+                lastPrices.pop(0)
+                getPriceRequest = self.client.get_estimated_price(self.coin, 'both', '1')
+                getPriceRequest = float(getPriceRequest['results'][0]['price'])
+                lastPrices.append(getPriceRequest)
+
+                coin_sma = sma(lastPrices)
+                coin_rsi = rsi(lastPrices)
+                coin_ema = ema(lastPrices[-1], coin_ema, period)
+               
+                #wait
+                time.sleep(self.requestInterval)
+
+            
         elif (mode == 2):
             pass
 
