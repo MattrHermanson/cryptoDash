@@ -140,7 +140,7 @@ def main():
     # print(api_trading_client.get_estimated_price('LTC-USD', 'both', '1')['results'][0])
     
     
-    profitBot = bot.Bot('LTC-USD', api_trading_client, '', 60)
+    profitBot = bot.Bot('LTC-USD', api_trading_client, '', 10)
     profitBot.run(1)
 
 

@@ -1,5 +1,6 @@
 from main import CryptoAPITrading
 import time
+import datetime
 from trade import Trade
 from indicators import rsi, sma, ema, macd
 
@@ -66,6 +67,8 @@ class Bot:
                 #wait
                 time.sleep(self.requestInterval)
 
+            print('Period Initialized')
+            
             #TODO change sma to use lastPrices[0] -> lastPrices[-1]
             coin_sma = sma(lastPrices)
             coin_rsi = rsi(lastPrices)
@@ -83,6 +86,13 @@ class Bot:
                 coin_ema = ema(lastPrices[-1], coin_ema, period)
                
                 #wait
+                if coin_rsi < 30 or coin_ema > lastPrices[-1] or coin_sma > lastPrices[-1]:
+                    print(f"BUY @ ${lastPrices[-1]} {datetime.datetime.now(tz=datetime.timezone.utc).timestamp()}")
+                elif coin_rsi > 70 or (coin_ema < lastPrices[-1] and coin_sma < lastPrices[-1]):
+                    print(f"SELL @ ${lastPrices[-1]} {datetime.datetime.now(tz=datetime.timezone.utc).timestamp()}")
+                else:
+                    print(lastPrices[-1])
+
                 time.sleep(self.requestInterval)
 
             
